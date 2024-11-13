@@ -1,0 +1,29 @@
+{
+  "month_year_max": [
+    {
+      "month_year": "5-2010"
+    },
+    {
+      "month_year": "5-2010"
+    }
+  ],
+  "nilai_suhu_max_humid_max": [
+    {
+      "humid": 36.0,
+      "idx": 101,
+      "kecerahan": 25.0,
+      "suhun": 36.0,
+      "timestamp": "2010-09-18 07:23:48"
+    },
+    {
+      "humid": 36.0,
+      "idx": 226,
+      "kecerahan": 27.0,
+      "suhun": 36.0,
+      "timestamp": "2011-05-02 12:29:34"
+    }
+  ],
+  "suhumax": 36.0,
+  "suhumin": 21.0,
+  "suhurata": 28.35
+}

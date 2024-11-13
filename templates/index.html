@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sensor Data Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Memasukkan Chart.js -->
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #2f3b44; /* Warna latar belakang gelap */
+            color: #f1f1f1; /* Warna teks terang */
+        }
+        .container {
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 30px;
+            text-align: center;
+        }
+        h1 {
+            color: #81c784; /* Warna hijau cerah */
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .last-updated {
+            font-size: 14px;
+            color: #a5d6a7; /* Hijau muda */
+            margin-top: 5px;
+        }
+        .summary {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+            gap: 20px;
+            flex-wrap: wrap; /* Agar item tetap teratur saat ukuran layar lebih kecil */
+        }
+        .summary-card {
+            background-color: #3e4a55; /* Warna latar belakang kartu gelap */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            width: 45%; /* Ubah menjadi 45% agar ada dua tabel per baris */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+        }
+        .summary-card h2 {
+            color: #81c784; /* Hijau cerah untuk judul */
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        .summary-card p {
+            font-size: 28px;
+            color: #f1f1f1; /* Teks putih untuk nilai */
+            margin: 0;
+        }
+        #chart-container {
+            margin-top: 30px;
+            background-color: #3e4a55; /* Latar belakang grafik gelap */
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+            color: #a5d6a7; /* Hijau muda untuk footer */
+        }
+        .footer a {
+            color: #81c784; /* Hijau cerah untuk link */
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        #weatherChart {
+            width: 100% !important;
+            height: 400px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DATA CUACA IoT DIAN RAISA</h1>
+        <div class="last-updated">Last updated: 13 November 2024</div>
+
+        <!-- Ringkasan Suhu dan Kelembapan (2 tabel di kanan, 2 tabel di kiri) -->
+        <div class="summary">
+            <div class="summary-card">
+                <h2>Temperature Max</h2>
+                <p id="temp-max">{{ suhu_max | default(0) | round(2) }}°C</p>
+            </div>
+            <div class="summary-card">
+                <h2>Temperature Min</h2>
+                <p id="temp-min">{{ suhu_min | default(0) | round(2) }}°C</p>
+            </div>
+            <div class="summary-card">
+                <h2>Average Temperature</h2>
+                <p id="temp-avg">{{ suhu_avg | default(0) | round(2) }}°C</p>
+            </div>
+            <div class="summary-card">
+                <h2>Humidity Average</h2>
+                <p id="humidity-avg">{{ kelembapan_avg | default(0) | round(2) }}%</p>
+            </div>
+        </div>
+
+        <!-- Grafik Suhu dan Kelembapan -->
+        <div id="chart-container">
+            <canvas id="weatherChart"></canvas>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2024 Sensor Data Dashboard. All rights reserved. | <a href="#">Privacy Policy</a></p>
+    </div>
+
+    <script>
+        // Data yang dikirim dari Flask ke template HTML
+        var waktuData = {{ waktu_data | tojson }};
+        var suhuData = {{ suhu_data | tojson }};
+        var kelembapanData = {{ kelembapan_data | tojson }};
+        
+        // Membuat chart
+        var ctx = document.getElementById('weatherChart').getContext('2d');
+        var weatherChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: waktuData,
+                datasets: [
+                    {
+                        label: 'Temperature (°C)',
+                        data: suhuData,
+                        borderColor: '#81c784', /* Hijau cerah */
+                        backgroundColor: 'rgba(129, 199, 132, 0.2)',
+                        fill: true
+                    },
+                    {
+                        label: 'Humidity (%)',
+                        data: kelembapanData,
+                        borderColor: '#a5d6a7', /* Hijau muda */
+                        backgroundColor: 'rgba(165, 214, 167, 0.2)',
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            color: '#f1f1f1'
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        ticks: {
+                            color: '#f1f1f1'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#f1f1f1'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
